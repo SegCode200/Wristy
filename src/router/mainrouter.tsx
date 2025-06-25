@@ -16,7 +16,7 @@ export const mainRoute = createBrowserRouter([
     ]
     },
     {
-      path: "/auth/admin",
+      path: "auth/admin",
       element:<AdminPage/>
       
     }

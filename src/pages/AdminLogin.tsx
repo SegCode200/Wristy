@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { FiLock, FiUser } from "react-icons/fi";
 
 interface AdminLoginProps {
   onLogin: () => void;
@@ -12,51 +13,67 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error,data} = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    console.log(data)
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
-      console.log(error)
-      setError("Invalid email or password");
+      setError("❌ Invalid email or password");
     } else {
       onLogin();
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-gray-100 to-gray-300 px-4">
       <form
         onSubmit={handleLogin}
-        className="bg-white shadow-md rounded p-6 w-full max-w-sm"
+        className="bg-white shadow-xl hover:shadow-2xl transition-shadow duration-300 rounded-xl p-8 w-full max-w-sm"
       >
-        <h2 className="text-xl font-bold mb-4">Admin Login</h2>
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-black text-white rounded-full mx-auto">
+            <FiLock size={24} />
+          </div>
+          <h2 className="text-xl font-bold mt-2">Admin Login</h2>
+          <p className="text-sm text-gray-500">Restricted access</p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Admin email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
-        />
-        <input
-          type="password"
-          placeholder="Admin password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
-        />
-        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+        <div className="mb-4">
+          <label className="text-sm font-medium text-gray-700">Email</label>
+          <div className="flex items-center border rounded px-2 mt-1">
+            <FiUser className="text-gray-400" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 outline-none bg-transparent"
+              placeholder="admin@example.com"
+            />
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-black"
+            placeholder="••••••••"
+          />
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
+        )}
+
         <button
           type="submit"
-          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+          className="w-full bg-black text-white py-2 rounded font-medium hover:bg-gray-900 transition"
         >
-          Login
+          Sign In
         </button>
       </form>
     </div>
   );
 };
+
 export default AdminLogin;

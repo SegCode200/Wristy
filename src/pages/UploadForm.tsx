@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import WatchList from "./WatchList ";
+import { FiLogOut, FiUploadCloud } from "react-icons/fi";
 
 const UploadForm = () => {
   const [name, setName] = useState("");
@@ -12,8 +13,9 @@ const UploadForm = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const navigate = useNavigate();
-  const [refreshKey, setRefreshKey] = useState(0); // used to trigger WatchList refresh
 
   useEffect(() => {
     const getUser = async () => {
@@ -47,7 +49,7 @@ const UploadForm = () => {
       setUploading(true);
 
       const fileName = `${Date.now()}_${imageFile.name}`;
-      let filePath = `${fileName}`;
+      const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("watches")
@@ -55,7 +57,7 @@ const UploadForm = () => {
 
       if (uploadError) {
         toast.error("❌ Upload failed at storage.");
-        console.error("Storage upload error:", uploadError.message);
+        console.error("Storage error:", uploadError.message);
         return;
       }
 
@@ -75,21 +77,21 @@ const UploadForm = () => {
       ]);
 
       if (insertError) {
-        toast.error("❌ Upload failed at DB insert.");
-        console.error("DB insert error:", insertError.message);
+        toast.error("❌ Upload failed at database.");
+        console.error("DB error:", insertError.message);
         return;
       }
 
+      toast.success("✅ Watch uploaded!");
       setName("");
       setPrice("");
       setCategory("Men");
       setImageFile(null);
       setImagePreview(null);
-      toast.success("✅ Watch uploaded successfully!");
-      setRefreshKey((prev) => prev + 1); // trigger WatchList reload
+      setRefreshKey((prev) => prev + 1);
     } catch (err: any) {
       console.error("❌ Unexpected error:", err.message);
-      toast.error("❌ Upload failed. Please try again.");
+      toast.error("Something went wrong. Try again.");
     } finally {
       setUploading(false);
     }
@@ -104,26 +106,30 @@ const UploadForm = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <div className=" flex-col mb-6">
-        <h2 className="text-2xl font-bold">📤 Upload New Watch</h2>
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-2xl rounded-xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <FiUploadCloud className="text-black" /> Upload New Watch
+        </h2>
         <button
           onClick={async () => {
             await supabase.auth.signOut();
             navigate("/auth/admin");
           }}
-          className="text-red-600 text-sm mt-4"
+          className="text-red-600 text-sm hover:underline flex items-center gap-1"
         >
-          🔓 Sign Out
+          <FiLogOut size={16} /> Sign Out
         </button>
       </div>
 
+      {/* Form */}
       <form onSubmit={handleUpload} className="space-y-4 mb-10">
         <div>
           <label className="block text-sm font-medium mb-1">Watch Name</label>
           <input
             type="text"
-            placeholder="Watch Name"
+            placeholder="e.g. Rolex Submariner"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-black"
@@ -133,7 +139,7 @@ const UploadForm = () => {
           <label className="block text-sm font-medium mb-1">Price (₦)</label>
           <input
             type="number"
-            placeholder="Price"
+            placeholder="e.g. 250000"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-black"
@@ -152,32 +158,32 @@ const UploadForm = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Image File</label>
+          <label className="block text-sm font-medium mb-1">Watch Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="w-full"
+            className="w-full border p-2 rounded bg-gray-50"
           />
         </div>
         {imagePreview && (
           <img
             src={imagePreview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded border"
+            className="w-full h-56 object-cover rounded border mt-2"
           />
         )}
         <button
           type="submit"
           disabled={uploading}
-          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+          className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-900 transition"
         >
           {uploading ? "Uploading..." : "Upload Watch"}
         </button>
       </form>
 
+      {/* Watch List */}
       <hr className="mb-6" />
-
       <WatchList key={refreshKey} />
     </div>
   );

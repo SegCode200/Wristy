@@ -1,4 +1,5 @@
-// components/WatchItem.tsx
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+
 type Props = {
   watch: {
     id: string;
@@ -8,37 +9,40 @@ type Props = {
     image_url: string;
   };
   onDelete: () => void;
-  onEdit: (watch: any) => void; // 👈 add this
+  onEdit: (watch: any) => void;
 };
 
 const WatchItem = ({ watch, onDelete, onEdit }: Props) => {
-  
   return (
-    <li className="flex items-center justify-between border p-3 rounded">
-      <div className="flex gap-3 items-center">
+    <li className="flex items-center justify-between p-4 rounded-lg bg-white shadow hover:shadow-md transition">
+      <div className="flex items-center gap-4">
         <img
           src={watch.image_url}
           alt={watch.name}
-          className="w-14 h-14 object-cover rounded"
+          loading="lazy"
+          className="w-16 h-16 rounded object-cover border"
         />
         <div>
-          <p className="font-semibold">{watch.name}</p>
+          <h3 className="text-base font-semibold text-gray-800">{watch.name}</h3>
           <p className="text-sm text-gray-600">₦{watch.price.toLocaleString()}</p>
-          <p className="text-xs text-gray-400">{watch.category}</p>
+          <span className="text-xs text-gray-400">{watch.category}</span>
         </div>
       </div>
-      <div className="flex flex-col space-y-2 text-right">
+
+      <div className="flex gap-3 items-center">
         <button
           onClick={() => onEdit(watch)}
-          className="text-blue-600 text-sm underline"
+          className="text-blue-600 hover:text-blue-800 transition"
+          title="Edit"
         >
-          Edit
+          <FiEdit2 size={18} />
         </button>
         <button
           onClick={onDelete}
-          className="text-red-500 text-sm underline"
+          className="text-red-500 hover:text-red-700 transition"
+          title="Delete"
         >
-          Delete
+          <FiTrash2 size={18} />
         </button>
       </div>
     </li>

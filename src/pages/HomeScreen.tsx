@@ -9,8 +9,6 @@ const HomeScreen = () => {
 
   return (
     <div>
-      {/* <CategoryTabs selected={selectedCategory} onSelect={setSelectedCategory} />
-      <WatchGrid watches={filtered} /> */}
       <Hero />
       <FeaturedSection />
       <ShopIntroBanner/>

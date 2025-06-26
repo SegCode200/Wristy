@@ -52,7 +52,9 @@ const ProductList = () => {
 
   useEffect(() => {
     fetchWatches();
+      if (page > 1 || category !== "All") {
     document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth" });
+  }
   }, [page,category]);
 
   const totalPages = Math.ceil(total / limit);

@@ -22,6 +22,7 @@ const WatchCard: React.FC<{ watch: WatchItem }> = ({ watch }) => {
           src={watch.image_url}
           alt={watch.name}
           className="w-full h-56 object-cover"
+          loading="lazy"
         />
         <div className="p-4">
           <h3 className="text-lg font-semibold mb-1">{watch.name}</h3>
